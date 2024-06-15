@@ -48,7 +48,13 @@ export const PixiApp = () => {
     window.addEventListener('mousedown', (e) => {
       container.x = e.clientX;
       container.y = e.clientY;
-      move(e.clientX, e.clientY);
+      move(container.x, container.y);
+    });
+
+    window.addEventListener('touchstart', (e) => {
+      container.x = e.touches[0].clientX;
+      container.y = e.touches[0].clientY;
+      move(container.x, container.y);
     });
   }, [app]);
 

@@ -1,10 +1,8 @@
 import { useApp } from "@pixi/react";
 import { Application, Container, Sprite, Texture, ICanvas } from "pixi.js";
 import { useEffect } from "react";
-import reactLogo from "../../assets/logo192.png";
+import CloudImg from "../../assets/cloud.png";
 import ninja from "../ninja";
-
-//https://adamemery.dev/articles/pixi-react
 
 export const PixiApp = () => {
   const app: Application<ICanvas> = useApp();
@@ -15,50 +13,37 @@ export const PixiApp = () => {
     const container = new Container();
     app.stage.addChild(container);
 
-    // Create a new texture
-    /*const texture = Texture.from(reactLogo);
+    const texture = Texture.from(CloudImg);
 
-    // Create a 5x5 grid of bunnies
-    for (let i = 0; i < 25; i++) {
-        const logo = new Sprite(texture);
-        logo.anchor.set(0.5);
-        logo.x = (i % 5) * 40;
-        logo.y = Math.floor(i / 5) * 40;
-        container.addChild(logo);
+    for (let i = 0; i < 8; i++) {
+      const cloud = new Sprite(texture);
+      cloud.scale.set(0.25 + Math.random() * 0.25);
+      cloud.x = Math.random() * app.screen.width;
+      cloud.y = Math.random() * (app.screen.height - cloud.height);
+      container.addChild(cloud);
     }
-
-    // Move container to the center
-    container.x = app.screen.width / 2;
-    container.y = app.screen.height / 2;
-
-    // Center logo sprite in local container coordinates
-    container.pivot.x = container.width / 2;
-    container.pivot.y = container.height / 2;*/
 
     const { update, move } = ninja(app);
 
-    // Listen for animate update
     app.ticker.add((delta) => {
-        // rotate the container!
-        // use delta to create frame-independent transform
-        container.rotation -= 0.01 * delta;
-        update();
+      container.children.forEach((cloud) => {
+        cloud.x += cloud.scale.x * delta * 5;
+        if(cloud.x > app.screen.width){
+          cloud.x = -(cloud as Sprite).width;
+          cloud.y = Math.random() * (app.screen.height - (cloud as Sprite).height);
+        }
+      });
+      update();
     });
 
-    window.addEventListener('mousedown', (e) => {
-      container.x = e.clientX;
-      container.y = e.clientY;
-      move(container.x, container.y);
+    window.addEventListener("mousedown", (e) => {
+      move(e.clientX, e.clientY);
     });
 
-    window.addEventListener('touchstart', (e) => {
-      container.x = e.touches[0].clientX;
-      container.y = e.touches[0].clientY;
-      move(container.x, container.y);
+    window.addEventListener("touchstart", (e) => {
+      move(e.touches[0].clientX, e.touches[0].clientY);
     });
   }, [app]);
 
-  return(
-    <></>
-  );
-}
+  return <></>;
+};
